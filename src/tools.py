@@ -16,3 +16,7 @@ def read_file_string(filename) -> str:
 
 def print_solution(part_nb: int, solution: Any) -> NoReturn:
 	print(f'Solution part n°{part_nb}: {solution}')
+
+
+def rstrip_lines(lines: list[str]) -> list[str]:
+	return [line.rstrip() for line in lines]
