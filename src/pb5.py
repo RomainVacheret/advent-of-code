@@ -6,29 +6,28 @@ from tools import print_solution, read_file
 Coordinates = NewType('Coordinates', list[list[int]])
 
 
-def func(a, b, c, d):
-	m1 = max(a, c)
-	m2 = min(a, c)
-	m3 = max(b, d)
-	m4 = min(b, d)
-
-	return m1 - m2 == m1 % ((m2 or 2) or 1) and m3 - m4 == m3 % ((m4 or 2) or 1)
-
-
-def get_hv_range(coords: Coordinates) -> Coordinates:
+def get_range(coords: Coordinates, solution: int) -> Coordinates:
 	(a, b), (c, d) = coords
+	abs1 = abs(a - c)
+	abs2 = abs(b - d)
 
 	if a == c:
 		return [(a, val) for val in range(min(b, d), max(b, d) + 1)]
 	elif b == d:
 		return [(val, b) for val in range(min(a, c), max(a, c) + 1)]
-	else:
-		return None
-	
+	elif solution == 2 and abs1 == abs2: # TODO -> improve
+		tmp =[(a, b), (c, d)]
+		f = tmp[a > c]
+		s = tmp[a < c]
+		cond = f[1] > s[1]
+		return [(count + f[0], f[1] + count * (-1 if cond else 1)) \
+			for count in range(abs(a - c) + 1 )]
 
-def solution(vents: list[str]) -> int:
+	return None
+	
+def solution(vents: list[str], solution_nb: int) -> int:
 	filtered = list(filter(lambda x: x is not None, 
-		(get_hv_range(coord) for coord in vents)))
+		(get_range(coord, solution_nb) for coord in vents)))
 	d = {}
 
 	for coords in filtered:
@@ -43,4 +42,5 @@ if __name__ == '__main__':
 		for coord in line.replace('\n', '').split(' -> ')] 
 			for line in read_file('../resources/input5.txt')]	
 
-	print_solution(1, solution(vents))
+	print_solution(1, solution(vents, 1))
+	print_solution(2, solution(vents, 2))
